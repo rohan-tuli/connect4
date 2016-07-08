@@ -1,15 +1,27 @@
 // Connect 4
 
 #include <iostream> 
+#include <string>
 
 using namespace std;
 
 int gameStatus = 0;
+int column; // TO"DO: better name.
+
+
+// TODO: fix syntax.
+
+string[] grid = new string[7][6];
+
+
+//Creates the grid.
+void createGrid() {
+	std::vector<std::vector<int>> grid{ {1, 1, 1} }
+	}
+}
 
 // Gets the input.
 void getInput() {
-	int column;
-	// TODO: check for invalid column values.
 	while ((std::cout << "Which column would you like to place your disk in?\n")
 		&& !(std::cin >> column)) {
 		std::cout << "That's not a number. Please try again.\n";
@@ -36,10 +48,20 @@ void printGrid() {
 	cout << endl;
 }
 	
+void editGrid() {
+	string cat = "cat";
+	string dog = "dog";
+	string row1 = cat + dog;
+	cout << row1;
+}
+
 int main() {
-	while (gameStatus == 0) {
+	createGrid();
+	grid.size();
+	//while (gameStatus == 0) {
 		printGrid();
 		getInput();
-	}
+		editGrid();
+	//}
     return 0;
 }
