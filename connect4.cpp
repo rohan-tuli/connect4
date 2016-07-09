@@ -10,26 +10,40 @@ const int NUM_COLUMNS = 7;
 const char EMPTY = '.';
 const char PLAYER = 'X';
 const char SPACE = ' ';
-
+const int INITIAL_ROW_VALUE = -1;
 int gameStatus = 0;
+int columnNumber;
+int column;
 
 vector<vector<char> > grid(NUM_ROWS, vector<char>(NUM_COLUMNS, EMPTY));
+vector<int> rowsOccupied(NUM_COLUMNS, INITIAL_ROW_VALUE);
 
-// Gets the input.
+bool columnIsFull(int columnNumber) {
+	if (rowsOccupied[columnNumber] < 5) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 void getInput() {
-	int column;
+	int userInput;
 	while ((cout << "Which column would you like to place your disk in? ")
-		&& !(cin >> column)) {
-		cout << "That's not a number. Please try again.\n";
+		&& (!(cin >> userInput) || userInput < 1 || userInput > 7)) {
+		cout << "That's not a number between 1 and 7 inclusive. Please try again.\n";
 		cin.clear();
 		cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
-
 	}
-  // TODO: find exact row where this goes.
-
-  grid[0][column - 1] = PLAYER;
-
-}
+	column = userInput - 1;
+	
+	if (columnIsFull(column)) {
+		cout << "All the rows are filled up in that column." << endl;
+	} else {
+		rowsOccupied[column]++;
+		int row = 5 - rowsOccupied[column];
+		grid[row][column] = PLAYER;
+	}
+} 
 
 void printGrid() {
   for (int i = 0; i < grid.size(); ++i) {
