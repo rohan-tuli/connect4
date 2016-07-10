@@ -14,6 +14,7 @@ const int INITIAL_ROW_VALUE = -1;
 int gameStatus = 0;
 int columnNumber;
 int column;
+int turnCounter = 0;
 
 void printBoard();
 
@@ -58,6 +59,28 @@ bool verticalConnect4Found() {
 	return false;
 }
 
+bool PositiveDiagonalConnect4Found() {
+	for (int i = 3; i < grid.size(); ++i) {
+		for (int j = 0; j < grid[i].size(); ++j) {
+			if (grid[i][j] == PLAYER && grid[i + 1][j - 1] == PLAYER && grid[i + 2][j - 2] == PLAYER && grid[i + 3][j - 3] == PLAYER) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool NegativeDiagonalConnect4Found() {
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < grid[i].size(); ++j) {
+			if (grid[i][j] == PLAYER && grid[i - 1][j + 1] == PLAYER && grid[i - 2][j + 2] == PLAYER && grid[i - 3][j + 3] == PLAYER) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 void getInput() {
 	int userInput;
 	while ((cout << "Which column would you like to place your disk in? ")
@@ -74,13 +97,16 @@ void getInput() {
 		rowsOccupied[column]++;
 		int row = 5 - rowsOccupied[column];
 		grid[row][column] = PLAYER;
-		if (horizontalConnect4Found() || verticalConnect4Found()) {
-			printBoard();
-			gameStatus = 1;
-			cout << "You won!!!!" << endl;
-		}
 	}
 } 
+
+void checkForConnect4() {
+	if (NegativeDiagonalConnect4Found()) {
+		printBoard();
+		gameStatus = 1;
+		cout << "You won!!!!" << endl;
+	}
+}
 
 void printBoard() {
 	for (int i = 0; i < grid.size(); ++i) {
@@ -96,6 +122,10 @@ int main() {
 	while (gameStatus == 0) {
 		printBoard();
 		getInput();
+		if (turnCounter > 3) {
+			checkForConnect4();
+		}
+		turnCounter++;
 	}
   return 0;
 }
