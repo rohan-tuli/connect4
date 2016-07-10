@@ -38,12 +38,25 @@ bool horizontalConnect4Found() {
 			else {
 				counter = 0;
 			}
-
 		}
 	}
 	return false;
 }
 
+bool verticalConnect4Found() {
+	int counter = 0;
+	for (int i = 0; i < grid.size(); ++i) {
+		if (grid[i][column] == PLAYER) {
+			counter++;
+			if (counter == 4) {
+				return true;
+			}
+		} else {
+			counter = 0;
+		}
+	}
+	return false;
+}
 
 void getInput() {
 	int userInput;
@@ -61,7 +74,7 @@ void getInput() {
 		rowsOccupied[column]++;
 		int row = 5 - rowsOccupied[column];
 		grid[row][column] = PLAYER;
-		if (horizontalConnect4Found()) {
+		if (horizontalConnect4Found() || verticalConnect4Found()) {
 			printBoard();
 			gameStatus = 1;
 			cout << "You won!!!!" << endl;
