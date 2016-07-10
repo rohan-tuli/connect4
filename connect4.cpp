@@ -15,16 +15,35 @@ int gameStatus = 0;
 int columnNumber;
 int column;
 
+void printBoard();
+
 vector<vector<char> > grid(NUM_ROWS, vector<char>(NUM_COLUMNS, EMPTY));
 vector<int> rowsOccupied(NUM_COLUMNS, INITIAL_ROW_VALUE);
 
 bool columnIsFull(int columnNumber) {
-	if (rowsOccupied[columnNumber] < 5) {
-		return false;
-	} else {
-		return true;
-	}
+	return rowsOccupied[columnNumber] == 5;
 }
+
+bool horizontalConnect4Found() {
+	int counter = 0;
+	for (int i = 0; i < grid.size(); ++i) {
+		counter = 0;
+		for (int j = 0; j < grid[i].size(); ++j) {
+			if (grid[i][j] == PLAYER) {
+				counter++;
+				if (counter == 4) {
+					return true;
+				}
+			}
+			else {
+				counter = 0;
+			}
+
+		}
+	}
+	return false;
+}
+
 
 void getInput() {
 	int userInput;
@@ -42,21 +61,27 @@ void getInput() {
 		rowsOccupied[column]++;
 		int row = 5 - rowsOccupied[column];
 		grid[row][column] = PLAYER;
+		if (horizontalConnect4Found()) {
+			printBoard();
+			gameStatus = 1;
+			cout << "You won!!!!" << endl;
+		}
 	}
 } 
 
-void printGrid() {
-  for (int i = 0; i < grid.size(); ++i) {
-    for (int j = 0; j < grid[i].size(); ++j) {
-      cout << grid[i][j] <<  SPACE;
-    }
-    cout << endl;
-  }
+void printBoard() {
+	for (int i = 0; i < grid.size(); ++i) {
+		for (int j = 0; j < grid[i].size(); ++j) {
+
+			cout << grid[i][j] << SPACE;
+		}
+		cout << endl;
+	}
 }
 
 int main() {
 	while (gameStatus == 0) {
-		printGrid();
+		printBoard();
 		getInput();
 	}
   return 0;
