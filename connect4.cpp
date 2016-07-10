@@ -59,10 +59,10 @@ bool verticalConnect4Found() {
 	return false;
 }
 
-bool PositiveDiagonalConnect4Found() {
-	for (int i = 3; i < grid.size(); ++i) {
+bool NegativeDiagonalConnect4Found() {
+	for (int i = 0; i < grid.size(); ++i) {
 		for (int j = 0; j < grid[i].size(); ++j) {
-			if (grid[i][j] == PLAYER && grid[i + 1][j - 1] == PLAYER && grid[i + 2][j - 2] == PLAYER && grid[i + 3][j - 3] == PLAYER) {
+			if (grid[i][j] == PLAYER && grid[i + 1][j + 1] == PLAYER && grid[i + 2][j + 2] == PLAYER && grid[i + 3][j + 3] == PLAYER) {
 				return true;
 			}
 		}
@@ -70,8 +70,8 @@ bool PositiveDiagonalConnect4Found() {
 	return false;
 }
 
-bool NegativeDiagonalConnect4Found() {
-	for (int i = 0; i < 3; ++i) {
+bool PositiveDiagonalConnect4Found() {
+	for (int i = 0; i < grid.size(); ++i) {
 		for (int j = 0; j < grid[i].size(); ++j) {
 			if (grid[i][j] == PLAYER && grid[i - 1][j + 1] == PLAYER && grid[i - 2][j + 2] == PLAYER && grid[i - 3][j + 3] == PLAYER) {
 				return true;
@@ -93,11 +93,13 @@ void getInput() {
 	
 	if (columnIsFull(column)) {
 		cout << "All the rows are filled up in that column." << endl;
-	} else {
+	}
+	else {
 		rowsOccupied[column]++;
 		int row = 5 - rowsOccupied[column];
 		grid[row][column] = PLAYER;
 	}
+	system("cls");
 } 
 
 void checkForConnect4() {
@@ -122,10 +124,7 @@ int main() {
 	while (gameStatus == 0) {
 		printBoard();
 		getInput();
-		if (turnCounter > 3) {
-			checkForConnect4();
-		}
-		turnCounter++;
+		checkForConnect4();
 	}
   return 0;
 }
