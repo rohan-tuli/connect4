@@ -9,6 +9,7 @@ const int NUM_ROWS = 6;
 const int NUM_COLUMNS = 7;
 const char EMPTY = '.';
 const char PLAYER = 'X';
+const char PLAYER2 = 'O';
 const char SPACE = ' ';
 const int INITIAL_ROW_VALUE = -1;
 int gameStatus = 0;
@@ -16,12 +17,13 @@ int columnNumber;
 int column;
 int turnCounter = 0;
 
+bool playerTurn = true;
 void printBoard();
 
 vector<vector<char> > grid(NUM_ROWS, vector<char>(NUM_COLUMNS, EMPTY));
 vector<int> rowsOccupied(NUM_COLUMNS, INITIAL_ROW_VALUE);
 
-bool columnIsFull(int columnNumber) {
+bool columnIsFull(int ) {
 	return rowsOccupied[columnNumber] == 5;
 }
 
@@ -30,10 +32,10 @@ bool horizontalConnect4Found() {
 	for (int i = 0; i < grid.size(); ++i) {
 		counter = 0;
 		for (int j = 0; j < grid[i].size(); ++j) {
-			if (grid[i][j] == PLAYER) {
+			if (grid[i][j] == (playerTurn ? PLAYER : PLAYER2)) {
 				counter++;
 				if (counter == 4) {
-					return true;
+					return true; 
 				}
 			}
 			else {
@@ -47,35 +49,13 @@ bool horizontalConnect4Found() {
 bool verticalConnect4Found() {
 	int counter = 0;
 	for (int i = 0; i < grid.size(); ++i) {
-		if (grid[i][column] == PLAYER) {
+		if (grid[i][column] == (playerTurn ? PLAYER : PLAYER2)) {
 			counter++;
 			if (counter == 4) {
 				return true;
 			}
 		} else {
 			counter = 0;
-		}
-	}
-	return false;
-}
-
-bool NegativeDiagonalConnect4Found() {
-	for (int i = 0; i < grid.size(); ++i) {
-		for (int j = 0; j < grid[i].size(); ++j) {
-			if (grid[i][j] == PLAYER && grid[i + 1][j + 1] == PLAYER && grid[i + 2][j + 2] == PLAYER && grid[i + 3][j + 3] == PLAYER) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-bool PositiveDiagonalConnect4Found() {
-	for (int i = 0; i < grid.size(); ++i) {
-		for (int j = 0; j < grid[i].size(); ++j) {
-			if (grid[i][j] == PLAYER && grid[i - 1][j + 1] == PLAYER && grid[i - 2][j + 2] == PLAYER && grid[i - 3][j + 3] == PLAYER) {
-				return true;
-			}
 		}
 	}
 	return false;
@@ -97,16 +77,24 @@ void getInput() {
 	else {
 		rowsOccupied[column]++;
 		int row = 5 - rowsOccupied[column];
-		grid[row][column] = PLAYER;
+		cout << playerTurn << endl;
+		if (playerTurn == true) {
+			grid[row][column] = PLAYER;
+		} else {
+			grid[row][column] = PLAYER2;
+		}
 	}
-	system("cls");
 } 
 
 void checkForConnect4() {
-	if (NegativeDiagonalConnect4Found()) {
+	if (horizontalConnect4Found() || verticalConnect4Found()) {
 		printBoard();
 		gameStatus = 1;
-		cout << "You won!!!!" << endl;
+		if (playerTurn == true) {
+			cout << "You won!!!!" << endl;
+		} else {
+			cout << "You lost!!!!" << endl;
+		}
 	}
 }
 
@@ -125,6 +113,7 @@ int main() {
 		printBoard();
 		getInput();
 		checkForConnect4();
+		playerTurn = !playerTurn;
 	}
   return 0;
 }
