@@ -9,21 +9,20 @@ const int NUM_ROWS = 6;
 const int NUM_COLUMNS = 7;
 const char EMPTY = '.';
 const char PLAYER = 'X';
-const char PLAYER2 = 'O';
+const char COMPUTER = 'O';
 const char SPACE = ' ';
 const int INITIAL_ROW_VALUE = -1;
 int gameStatus = 0;
 int columnNumber;
 int column;
-int turnCounter = 0;
-
 bool playerTurn = true;
+
 void printBoard();
 
 vector<vector<char> > grid(NUM_ROWS, vector<char>(NUM_COLUMNS, EMPTY));
 vector<int> rowsOccupied(NUM_COLUMNS, INITIAL_ROW_VALUE);
 
-bool columnIsFull(int ) {
+bool columnIsFull(int columnNumber) {
 	return rowsOccupied[columnNumber] == 5;
 }
 
@@ -32,10 +31,10 @@ bool horizontalConnect4Found() {
 	for (int i = 0; i < grid.size(); ++i) {
 		counter = 0;
 		for (int j = 0; j < grid[i].size(); ++j) {
-			if (grid[i][j] == (playerTurn ? PLAYER : PLAYER2)) {
+			if (grid[i][j] == (playerTurn ? PLAYER : COMPUTER)) {
 				counter++;
 				if (counter == 4) {
-					return true; 
+					return true;
 				}
 			}
 			else {
@@ -49,13 +48,95 @@ bool horizontalConnect4Found() {
 bool verticalConnect4Found() {
 	int counter = 0;
 	for (int i = 0; i < grid.size(); ++i) {
-		if (grid[i][column] == (playerTurn ? PLAYER : PLAYER2)) {
+		if (grid[i][column] == (playerTurn ? PLAYER : COMPUTER)) {
 			counter++;
 			if (counter == 4) {
 				return true;
 			}
-		} else {
+		}
+		else {
 			counter = 0;
+		}
+	}
+	return false;
+}
+
+bool positiveSlopeConnect4Found() {
+	for (int i = 0; i < 4; i++) {
+		int row = 5;
+		int col = i;
+		int counter = 0;
+		while (row >= 0 && col < NUM_COLUMNS) {
+			if (grid[row][col] == (playerTurn ? PLAYER : COMPUTER)) {
+				counter++;
+				if (counter == 4) {
+					return true;
+				}
+			}
+			else {
+				counter = 0;
+			}
+			row--;
+			col++;
+		}
+	}
+
+	for (int i = 4; i > 2; i--) {
+		int row = i;
+		int col = 0;
+		int counter = 0;
+		while (row >= 0 && col < NUM_COLUMNS) {
+			if (grid[row][col] == (playerTurn ? PLAYER : COMPUTER)) {
+				counter++;
+				if (counter == 4) {
+					return true;
+				}
+			}
+			else {
+				counter = 0;
+			}
+			row--;
+			col++;
+		}
+	}
+	return false;
+}
+bool negativeSlopeConnect4Found() {
+	for (int i = 0; i < 4; i++) {
+		int row = 0;
+		int col = i;
+		int counter = 0;
+		while (row < NUM_ROWS && col < NUM_COLUMNS) {
+			if (grid[row][col] == (playerTurn ? PLAYER : COMPUTER)) {
+				counter++;
+				if (counter == 4) {
+					return true;
+				}
+			}
+			else {
+				counter = 0;
+			}
+			row++;
+			col++;
+		}
+	}
+
+	for (int i = 1; i < 3; i++) {
+		int row = i;
+		int col = 0;
+		int counter = 0;
+		while (row < NUM_ROWS && col < NUM_COLUMNS) {
+			if (grid[row][col] == (playerTurn ? PLAYER : COMPUTER)) {
+				counter++;
+				if (counter == 4) {
+					return true;
+				}
+			}
+			else {
+				counter = 0;
+			}
+			row++;
+			col++;
 		}
 	}
 	return false;
@@ -70,31 +151,28 @@ void getInput() {
 		cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
 	}
 	column = userInput - 1;
-	
+
 	if (columnIsFull(column)) {
 		cout << "All the rows are filled up in that column." << endl;
 	}
 	else {
 		rowsOccupied[column]++;
 		int row = 5 - rowsOccupied[column];
-		cout << playerTurn << endl;
-		if (playerTurn == true) {
-			grid[row][column] = PLAYER;
-		} else {
-			grid[row][column] = PLAYER2;
-		}
-	}
-} 
+		char symbol;
 
-void checkForConnect4() {
-	if (horizontalConnect4Found() || verticalConnect4Found()) {
-		printBoard();
-		gameStatus = 1;
-		if (playerTurn == true) {
-			cout << "You won!!!!" << endl;
-		} else {
-			cout << "You lost!!!!" << endl;
+		grid[row][column] = playerTurn ? PLAYER : COMPUTER;
+		if (horizontalConnect4Found() || verticalConnect4Found()
+			|| positiveSlopeConnect4Found() || negativeSlopeConnect4Found()) {
+			printBoard();
+			gameStatus = 1;
+			if (playerTurn) {
+				cout << "You won!!!!" << endl;
+			}
+			else {
+				cout << "You lost!!!!" << endl;
+			}
 		}
+		playerTurn = !playerTurn;
 	}
 }
 
@@ -112,8 +190,6 @@ int main() {
 	while (gameStatus == 0) {
 		printBoard();
 		getInput();
-		checkForConnect4();
-		playerTurn = !playerTurn;
 	}
-  return 0;
+	return 0;
 }
